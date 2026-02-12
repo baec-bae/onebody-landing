@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>결제 진행 | ONEBODY School Bible Project</title>
+  <meta name="theme-color" content="#0B1220" />
+  <style>
+    :root{--bg:#0B1220;--text:#EAF0FF;--muted:rgba(234,240,255,.72);--line:rgba(234,240,255,.12);--card:#0F1A33;--accent:#7DD3FC;--radius:18px;--shadow:0 18px 60px rgba(0,0,0,.35);}
+    *{box-sizing:border-box}
+    body{margin:0;font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+    .wrap{max-width:760px;margin:0 auto;padding:24px}
+    .panel{border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    h1{margin:0 0 8px 0;font-size:26px}
+    .muted{color:var(--muted);font-size:14px;margin:0}
+    label{display:block;margin:14px 0 6px 0;color:var(--muted);font-size:13px}
+    input{
+      width:100%;padding:12px 12px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.02);color:var(--text);font-size:16px;outline:none
+    }
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+    .btn{
+      width:100%;display:inline-flex;align-items:center;justify-content:center;
+      padding:12px 14px;border-radius:14px;border:1px solid rgba(125,211,252,.35);
+      background:linear-gradient(135deg, rgba(125,211,252,.22), rgba(167,243,208,.18));
+      color:var(--text);font-weight:800;cursor:pointer
+    }
+    .ghost{
+      width:100%;display:inline-flex;align-items:center;justify-content:center;
+      padding:12px 14px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.03);color:var(--text);font-weight:700;cursor:pointer
+    }
+    .box{margin-top:14px;border:1px dashed rgba(234,240,255,.18);border-radius:16px;padding:14px;background:rgba(255,255,255,.02)}
+    .small{font-size:12px;color:var(--muted)}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    a{color:inherit;text-decoration:none}
+    code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="top">
+        <div>
+          <h1>결제 진행</h1>
+          <p class="muted">선택한 금액을 확정한 뒤, ONEBODY 결제 페이지로 이동합니다.</p>
+        </div>
+        <a class="ghost" style="max-width:140px" href="index.html">← 돌아가기</a>
+      </div>
+
+      <label>참여 금액(원)</label>
+      <input id="amt" inputmode="numeric" placeholder="예: 10000" />
+
+      <div class="row">
+        <div>
+          <label>이름(선택)</label>
+          <input id="name" placeholder="홍길동" />
+        </div>
+        <div>
+          <label>연락처(선택)</label>
+          <input id="phone" placeholder="01012345678" />
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:800;margin-bottom:6px">운영팀용 추적 파라미터(자동)</div>
+        <div class="small">이동 URL에 아래가 자동으로 붙습니다: <code>utm_source</code>, <code>utm_medium</code>, <code>utm_campaign</code>, <code>amt</code></div>
+      </div>
+
+      <div style="margin-top:14px" class="row">
+        <button class="btn" id="goPay">ONEBODY 결제페이지로 이동</button>
+        <a class="ghost" id="copyLink" href="#">결제 링크 복사</a>
+      </div>
+
+      <p class="small" style="margin-top:12px">
+        ⚙️ 설정: 이 파일 안의 <b>PAYMENT_BASE_URL</b>을 실제 결제 URL로 교체하세요.
+      </p>
+    </div>
+  </div>
+
+<script>
+  // ✅ 너희 실제 결제 URL로 바꿔 넣기 (우클릭 → 링크주소 복사)
+  // 예시: "https://결제도메인/...."
+  const PAYMENT_BASE_URL = "https://www.onebody.org/GIVE/"; // 임시값(교체 권장)
+
+  function getParam(name){
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+  }
+  function setDefaultAmt(){
+    const a = getParam("amt");
+    if (!a || a === "0") return;
+    document.getElementById("amt").value = a;
+  }
+  function buildPayUrl(){
+    const url = new URL(PAYMENT_BASE_URL);
+    const here = new URL(window.location.href);
+
+    // pass-through UTM
+    ["utm_source","utm_medium","utm_campaign","utm_content"].forEach(k=>{
+      const v = here.searchParams.get(k);
+      if (v) url.searchParams.set(k, v);
+    });
+
+    // amount & optional lead info
+    const amt = (document.getElementById("amt").value || "").replace(/[^\d]/g,"");
+    if (amt) url.searchParams.set("amt", amt);
+
+    const name = (document.getElementById("name").value || "").trim();
+    const phone = (document.getElementById("phone").value || "").trim();
+    if (name) url.searchParams.set("lead_name", name);
+    if (phone) url.searchParams.set("lead_phone", phone);
+
+    // return / thanks (결제 시스템이 리턴 URL을 지원할 경우에만 작동)
+    // 지원 안 하면 이 파라미터는 무시될 수 있음.
+    url.searchParams.set("return", new URL("thanks.html", window.location.href).toString());
+
+    return url.toString();
+  }
+
+  document.getElementById("goPay").addEventListener("click", ()=>{
+    const amt = (document.getElementById("amt").value || "").replace(/[^\d]/g,"");
+    if (!amt || Number(amt) < 1000){
+      alert("금액을 입력해 주세요. (최소 1,000원 권장)");
+      return;
+    }
+    window.location.href = buildPayUrl();
+  });
+
+  document.getElementById("copyLink").addEventListener("click", async (e)=>{
+    e.preventDefault();
+    const link = buildPayUrl();
+    try{
+      await navigator.clipboard.writeText(link);
+      alert("결제 링크를 복사했어요!");
+    }catch(err){
+      prompt("복사 실패. 아래 링크를 수동으로 복사해 주세요:", link);
+    }
+  });
+
+  setDefaultAmt();
+</script>
+</body>
+</html>
