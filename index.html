@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ONEBODY School Bible Project | 단기 참여</title>
+  <meta name="description" content="한 아이의 ‘첫 성경’을 보내는 시즌 프로젝트에 참여하세요. 단기 참여로 시작할 수 있습니다." />
+  <meta name="theme-color" content="#0B1220" />
+  <style>
+    :root{
+      --bg:#0B1220;
+      --card:#0F1A33;
+      --soft:#101B37;
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --line:rgba(234,240,255,.12);
+      --accent:#7DD3FC;
+      --accent2:#A7F3D0;
+      --danger:#FCA5A5;
+      --radius:18px;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --max:1100px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(125,211,252,.14), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(167,243,208,.12), transparent 55%),
+        radial-gradient(900px 700px at 60% 100%, rgba(99,102,241,.14), transparent 55%),
+        var(--bg);
+      line-height:1.55;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--max);margin:0 auto;padding:24px}
+    header{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:16px;padding:10px 0 22px 0;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:34px;height:34px;border-radius:10px;
+      background:linear-gradient(135deg, rgba(125,211,252,.9), rgba(167,243,208,.9));
+      box-shadow: 0 12px 30px rgba(125,211,252,.18);
+    }
+    .brand strong{font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+    .nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .pill{
+      padding:10px 12px;border:1px solid var(--line);border-radius:999px;
+      background:rgba(255,255,255,.03);
+      font-size:13px;color:var(--muted);
+    }
+    .hero{
+      display:grid;grid-template-columns: 1.25fr .75fr;gap:22px;
+      align-items:stretch;
+    }
+    @media (max-width:920px){.hero{grid-template-columns:1fr}}
+    .panel{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .heroMain{padding:34px}
+    .kicker{color:var(--muted);font-size:14px;letter-spacing:.06em}
+    h1{margin:10px 0 10px 0;font-size:42px;line-height:1.12}
+    @media (max-width:480px){h1{font-size:34px}}
+    .sub{margin:10px 0 0 0;color:var(--muted);font-size:16px;max-width:55ch}
+    .ctaRow{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:12px 14px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);font-weight:700;letter-spacing:.01em;
+      transition:.18s transform,.18s background,.18s border-color;
+      cursor:pointer;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.07);border-color:rgba(125,211,252,.35)}
+    .btnPrimary{
+      border-color:rgba(125,211,252,.35);
+      background:linear-gradient(135deg, rgba(125,211,252,.22), rgba(167,243,208,.18));
+    }
+    .mini{font-size:12px;color:var(--muted);margin-top:10px}
+    .heroSide{padding:20px}
+    .glass{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.03);
+      padding:16px;
+    }
+    .stat{
+      display:flex;justify-content:space-between;align-items:baseline;
+      padding:10px 0;border-bottom:1px solid var(--line);
+    }
+    .stat:last-child{border-bottom:none}
+    .stat b{font-size:16px}
+    .stat span{color:var(--muted);font-size:13px}
+    section{margin-top:26px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media (max-width:920px){.grid3{grid-template-columns:1fr}}
+    .card{
+      padding:18px;border-radius:var(--radius);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .card h3{margin:6px 0 6px 0;font-size:18px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+    .price{
+      margin-top:12px;display:flex;align-items:baseline;justify-content:space-between;
+      gap:10px;
+      padding-top:12px;border-top:1px dashed rgba(234,240,255,.18);
+    }
+    .price strong{font-size:20px}
+    .tag{
+      font-size:12px;color:rgba(234,240,255,.8);
+      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      white-space:nowrap;
+    }
+    .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    @media (max-width:920px){.timeline{grid-template-columns:1fr}}
+    .step{
+      padding:16px;border-radius:16px;border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+    }
+    .step .n{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:28px;height:28px;border-radius:10px;
+      background:rgba(125,211,252,.16);border:1px solid rgba(125,211,252,.25);
+      margin-bottom:10px;font-weight:800;
+    }
+    .step b{display:block;margin-bottom:6px}
+    .faq{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width:920px){.faq{grid-template-columns:1fr}}
+    details{
+      border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.02);
+      padding:14px 14px;
+    }
+    summary{cursor:pointer;font-weight:800}
+    details p{color:var(--muted);margin:10px 0 0 0;font-size:14px}
+    footer{margin:34px 0 20px 0;color:var(--muted);font-size:12px}
+    .center{text-align:center}
+    .divider{height:1px;background:var(--line);margin:20px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>ONEBODY</strong><div class="kicker">School Bible Project</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="pill" href="#how">프로젝트 진행</a>
+        <a class="pill" href="#packages">참여 금액</a>
+        <a class="pill" href="#faq">FAQ</a>
+      </nav>
+    </header>
+
+    <div class="hero">
+      <div class="panel heroMain">
+        <div class="kicker">단기 참여로 시작하는 시즌 프로젝트</div>
+        <h1>한 아이의 ‘첫 성경’을<br/>지금 준비합니다.</h1>
+        <p class="sub">
+          원바디는 학교 단위로 성경을 보급합니다. 이 프로젝트는 단 한 번의 결제가 아니라,
+          <b>준비 단계부터 배포 완료까지</b> 함께하는 참여입니다.
+        </p>
+
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="pay.html?amt=10000&utm_source=landing&utm_medium=button&utm_campaign=schoolbible_short">성경 1권 보내기 · 10,000원</a>
+          <a class="btn" href="#packages">수량/금액 직접 선택</a>
+        </div>
+        <div class="mini">※ 결제는 기존 ONEBODY 결제 시스템으로 안전하게 이동합니다.</div>
+      </div>
+
+      <aside class="panel heroSide">
+        <div class="glass">
+          <div class="stat"><b>왜 ‘단기 참여’인가요?</b><span>진입 장벽을 낮추기 위해</span></div>
+          <div class="stat"><b>결과는 언제 받나요?</b><span>연 1회 배포 + 단계별 진행 공유</span></div>
+          <div class="stat"><b>정기후원도 가능한가요?</b><span>원할 때 선택(강요 없음)</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="glass">
+          <div class="kicker">현재 페이지가 “월 정기결제” 중심이라면</div>
+          <div style="margin-top:8px;color:var(--muted);font-size:14px;">
+            이 랜딩은 <b>단기 참여 전용 입구</b>로 쓰세요. (광고/콘텐츠/카톡 공유 링크로 최적)
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section id="packages">
+      <div class="panel" style="padding:22px">
+        <div class="kicker">단기 참여 금액</div>
+        <h2 style="margin:8px 0 10px 0;">내가 맡을 ‘아이 수’를 선택하세요</h2>
+        <p style="margin:0;color:var(--muted)">원하는 금액으로 참여할 수 있고, 결제 단계에서 금액을 다시 조정할 수 있습니다.</p>
+
+        <div style="margin-top:16px" class="grid3">
+          <div class="card">
+            <div class="tag">가장 많이 선택</div>
+            <h3>성경 1권</h3>
+            <p>가장 부담 없는 첫 참여. “이번 시즌”의 한 아이를 맡습니다.</p>
+            <div class="price">
+              <strong>10,000원</strong>
+              <a class="btn" href="pay.html?amt=10000&utm_source=landing&utm_medium=card&utm_campaign=schoolbible_short">선택</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="tag">가족/셀 추천</div>
+            <h3>성경 3권</h3>
+            <p>가정·셀 단위로 함께 참여하기 좋은 구성입니다.</p>
+            <div class="price">
+              <strong>30,000원</strong>
+              <a class="btn" href="pay.html?amt=30000&utm_source=landing&utm_medium=card&utm_campaign=schoolbible_short">선택</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="tag">리더/교회 추천</div>
+            <h3>성경 10권</h3>
+            <p>학교 현장에 더 넓게 보급되도록 힘을 보탭니다.</p>
+            <div class="price">
+              <strong>100,000원</strong>
+              <a class="btn" href="pay.html?amt=100000&utm_source=landing&utm_medium=card&utm_campaign=schoolbible_short">선택</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="center">
+          <a class="btn btnPrimary" href="pay.html?amt=0&utm_source=landing&utm_medium=cta&utm_campaign=schoolbible_short">원하는 금액으로 참여하기</a>
+          <div class="mini">원하는 금액(예: 20,000원 / 50,000원)도 가능합니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="panel" style="padding:22px">
+        <div class="kicker">연 1회 배포형 프로젝트를 위한</div>
+        <h2 style="margin:8px 0 10px 0;">진행 단계 공개</h2>
+        <p style="margin:0;color:var(--muted)">배포 시점까지 기다리게 하지 않습니다. 프로젝트는 단계별로 진행되고, 그 진척을 공유합니다.</p>
+
+        <div style="margin-top:16px" class="timeline">
+          <div class="step">
+            <div class="n">1</div>
+            <b>준비</b>
+            <div style="color:var(--muted);font-size:14px">수량 확정 · 인쇄/제작 준비</div>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <b>협약</b>
+            <div style="color:var(--muted);font-size:14px">현지 학교/기관 협약 · 일정 확정</div>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <b>인쇄·운송</b>
+            <div style="color:var(--muted);font-size:14px">제작 완료 · 국가별 운송</div>
+          </div>
+          <div class="step">
+            <div class="n">4</div>
+            <b>배포 완료</b>
+            <div style="color:var(--muted);font-size:14px">현장 사진 · 리포트 공유</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="center">
+          <a class="btn" href="pay.html?amt=10000&utm_source=landing&utm_medium=timeline&utm_campaign=schoolbible_short">지금 참여하기</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="panel" style="padding:22px">
+        <div class="kicker">FAQ</div>
+        <h2 style="margin:8px 0 10px 0;">자주 묻는 질문</h2>
+
+        <div class="faq" style="margin-top:14px">
+          <details>
+            <summary>단기 참여인데, 왜 ‘프로젝트’라고 하나요?</summary>
+            <p>이 참여는 단순 후원 버튼이 아니라, 준비→협약→인쇄·운송→배포까지 이어지는 시즌 여정에 함께하는 형태로 설계되었습니다.</p>
+          </details>
+          <details>
+            <summary>정기후원으로 전환해야 하나요?</summary>
+            <p>아니요. 단기 참여로 시작해도 됩니다. 정기 동행은 원하실 때만 선택할 수 있도록 안내합니다.</p>
+          </details>
+          <details>
+            <summary>결제는 어디서 하나요?</summary>
+            <p>결제는 기존 ONEBODY 결제 시스템으로 안전하게 이동해 진행됩니다.</p>
+          </details>
+          <details>
+            <summary>세금영수증/기부금영수증은 어떻게 하나요?</summary>
+            <p>ONEBODY 안내에 따라 발급받을 수 있습니다. (결제 완료 후 안내 페이지에서 바로 연결됩니다.)</p>
+          </details>
+        </div>
+
+        <div class="divider"></div>
+        <div class="center">
+          <a class="btn btnPrimary" href="pay.html?amt=10000&utm_source=landing&utm_medium=final&utm_campaign=schoolbible_short">성경 1권 보내기</a>
+          <div class="mini">“후원”보다 “참여”에 초점을 둔 단기 프로젝트입니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="center">
+      © ONEBODY · School Bible Project (Landing MVP) · 운영팀 내부용 커스터마이즈 가능
+    </footer>
+  </div>
+</body>
+</html>
