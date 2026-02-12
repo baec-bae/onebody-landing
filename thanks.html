@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>감사합니다 | ONEBODY School Bible Project</title>
+  <meta name="theme-color" content="#0B1220" />
+  <style>
+    :root{--bg:#0B1220;--text:#EAF0FF;--muted:rgba(234,240,255,.72);--line:rgba(234,240,255,.12);--radius:18px;--shadow:0 18px 60px rgba(0,0,0,.35);}
+    *{box-sizing:border-box}
+    body{margin:0;font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+    .wrap{max-width:760px;margin:0 auto;padding:24px}
+    .panel{border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    h1{margin:0 0 8px 0;font-size:26px}
+    .muted{color:var(--muted);font-size:14px;margin:0}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 14px;border-radius:14px;border:1px solid rgba(125,211,252,.35);background:rgba(255,255,255,.04);color:var(--text);font-weight:800;cursor:pointer;text-decoration:none}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .box{margin-top:14px;border:1px dashed rgba(234,240,255,.18);border-radius:16px;padding:14px;background:rgba(255,255,255,.02)}
+    .small{font-size:12px;color:var(--muted)}
+    a{color:inherit}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <h1>감사합니다.</h1>
+      <p class="muted">당신의 참여로 ‘첫 성경’을 기다리는 아이들에게 한 걸음 더 가까워졌습니다.</p>
+
+      <div class="box">
+        <div style="font-weight:800;margin-bottom:6px">다음 안내</div>
+        <div class="small">
+          • 프로젝트는 준비→협약→인쇄/운송→배포 단계로 진행되며, 단계별 소식을 공유합니다.<br/>
+          • 결제 확인/기부금영수증 관련 문의는 ONEBODY 공식 안내에 따라 진행해 주세요.
+        </div>
+      </div>
+
+      <div class="row">
+        <a class="btn" href="index.html">랜딩으로 돌아가기</a>
+        <a class="btn" id="share" href="#">링크 공유하기</a>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:800;margin-bottom:6px">선택 옵션</div>
+        <div class="small">
+          이번 프로젝트 이후에도 함께하고 싶다면, 정기 동행을 선택할 수 있습니다(강요 없음).<br/>
+          운영팀 내부에서 정기 전환 CTA 링크를 여기에 추가해도 됩니다.
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  document.getElementById("share").addEventListener("click", async (e)=>{
+    e.preventDefault();
+    const url = new URL(window.location.href);
+    url.pathname = url.pathname.replace("thanks.html","index.html");
+    const shareUrl = url.toString();
+    try{
+      if (navigator.share){
+        await navigator.share({ title:"ONEBODY School Bible Project", text:"단기 참여로 ‘첫 성경’을 보냅니다.", url: shareUrl });
+      }else{
+        await navigator.clipboard.writeText(shareUrl);
+        alert("링크를 복사했어요!");
+      }
+    }catch(err){
+      prompt("아래 링크를 복사해 주세요:", shareUrl);
+    }
+  });
+</script>
+</body>
+</html>
