@@ -144,6 +144,50 @@
     footer{margin:34px 0 20px 0;color:var(--muted);font-size:12px}
     .center{text-align:center}
     .divider{height:1px;background:var(--line);margin:20px 0}
+      .main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 30px;
+  }
+
+  .main-nav > ul > li {
+    position: relative;
+  }
+
+  .main-nav a {
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 10px 0;
+    display: block;
+  }
+
+  .sub-menu {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 0;
+    display: none;
+    min-width: 180px;
+  }
+
+  .sub-menu li {
+    padding: 5px 20px;
+  }
+
+  .sub-menu li a {
+    font-weight: 400;
+    font-size: 14px;
+  }
+
+  .main-nav li:hover .sub-menu {
+    display: block;
+  }
   </style>
 </head>
 <body>
@@ -155,10 +199,48 @@
           <strong>ONEBODY</strong><div class="kicker">School Bible Project</div>
         </div>
       </div>
-      <nav class="nav">
-        <a class="pill" href="#how">프로젝트 진행</a>
-        <a class="pill" href="#packages">참여 금액</a>
-        <a class="pill" href="#faq">FAQ</a>
+<nav class="main-nav">
+  <ul>
+    <li>
+      <a href="#">ONEBODY 소개</a>
+      <ul class="sub-menu">
+        <li><a href="#">비전</a></li>
+        <li><a href="#">연혁</a></li>
+        <li><a href="#">팀 소개</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#">사역 소개</a>
+      <ul class="sub-menu">
+        <li><a href="#">성경보급 사역</a></li>
+        <li><a href="#">스쿨바이블</a></li>
+        <li><a href="#">텐트메이커</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#">프로젝트</a>
+      <ul class="sub-menu">
+        <li><a href="#">단기 성경보내기</a></li>
+        <li><a href="#">학교 프로젝트</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#">후원 안내</a>
+      <ul class="sub-menu">
+        <li><a href="#">정기후원</a></li>
+        <li><a href="#">기업후원</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#">소식</a>
+      <ul class="sub-menu">
+        <li><a href="#">공지사항</a></li>
+        <li><a href="#">사역 리포트</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
       </nav>
     </header>
 
