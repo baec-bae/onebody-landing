@@ -144,125 +144,110 @@
     footer{margin:34px 0 20px 0;color:var(--muted);font-size:12px}
     .center{text-align:center}
     .divider{height:1px;background:var(--line);margin:20px 0}
-      .main-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 30px;
-  }
+      
 
-  .main-nav > ul > li {
-    position: relative;
-  }
+    /* ===== TOP NAV (DROPDOWN) ===== */
+.main-nav { margin-left: auto; }
+.main-nav > ul{
+  list-style:none; margin:0; padding:0;
+  display:flex; gap:18px; flex-wrap:wrap; justify-content:flex-end;
+}
+.main-nav > ul > li{ position:relative; }
+.main-nav > ul > li > a{
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  font-size:13px;
+  color:var(--muted);
+  display:block;
+}
+.main-nav > ul > li > a:hover{
+  border-color:rgba(125,211,252,.35);
+  background:rgba(255,255,255,.07);
+  color:var(--text);
+}
 
-  .main-nav a {
-    color: var(--text);
-    font-weight: 600;
-    text-decoration: none;
-    padding: 10px 0;
-    display: block;
-  }
+/* submenu */
+.sub-menu{
+  position:absolute;
+  top:calc(100% + 10px);
+  left:0;
+  min-width:190px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 0;
+  display:none;
+  z-index:9999;
+  box-shadow: var(--shadow);
+}
+.sub-menu li{ list-style:none; }
+.sub-menu a{
+  display:block;
+  padding:10px 14px;
+  font-size:14px;
+  color:var(--text);
+  white-space:nowrap;
+}
+.sub-menu a:hover{ background:rgba(255,255,255,.05); }
 
-  .sub-menu {
-    position: absolute;
-    top: 40px;
-    left: 0;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 10px 0;
-    display: none;
-    min-width: 180px;
-  }
+/* hover시에만 열리기 */
+.main-nav > ul > li:hover > .sub-menu { display:block; }
 
-  .sub-menu li {
-    padding: 5px 20px;
-  }
+/* 모바일에선 드롭다운 숨기고 줄바꿈 메뉴만 */
+@media (max-width:720px){
+  .main-nav > ul{ gap:8px; }
+  .sub-menu{ position:static; display:none; margin-top:8px; }
+  .main-nav > ul > li:hover > .sub-menu{ display:none; } /* 모바일 호버 방지 */
+}
 
-  .sub-menu li a {
-    font-weight: 400;
-    font-size: 14px;
-  }
-
-  .main-nav li:hover .sub-menu {
-    display: block;
-  }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <strong>ONEBODY</strong><div class="kicker">School Bible Project</div>
-        </div>
-      </div>
-/* ===== MAIN NAV RESET ===== */
-.main-nav {
-  margin-left: auto;
-}
+<header>
+  <div class="brand">
+    <div class="logo" aria-hidden="true"></div>
+    <div>
+      <strong>ONEBODY</strong>
+      <div class="kicker">School Bible Project</div>
+    </div>
+  </div>
 
-.main-nav > ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 40px;
-}
+  <nav class="main-nav">
+    <ul>
+      <li><a href="#about">ONEBODY 소개</a></li>
 
-.main-nav > ul > li {
-  position: relative;
-}
+      <li>
+        <a href="#mission">사역 소개</a>
+        <ul class="sub-menu">
+          <li><a href="#mission">성경보급 사역</a></li>
+          <li><a href="#mission">텐트메이커 사역</a></li>
+        </ul>
+      </li>
 
-.main-nav > ul > li > a {
-  color: var(--text);
-  font-weight: 600;
-  text-decoration: none;
-  padding: 12px 0;
-  display: block;
-}
+      <li>
+        <a href="#projects">프로젝트</a>
+        <ul class="sub-menu">
+          <li><a href="#how">단기 성경 보내기</a></li>
+          <li><a href="#packages">참여 금액</a></li>
+        </ul>
+      </li>
 
-/* ===== SUB MENU ===== */
-.sub-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 10px 0;
-  display: none;
-  min-width: 180px;
-  z-index: 999;
-}
+      <li>
+        <a href="#guide">후원 안내</a>
+        <ul class="sub-menu">
+          <li><a href="pay.html?amt=10000">단기 후원하기</a></li>
+          <li><a href="https://www.onebody.org/donate/index.php?pi=sf_general">정기 후원하기</a></li>
+        </ul>
+      </li>
 
-.sub-menu li {
-  list-style: none;
-}
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </nav>
+</header>
 
-.sub-menu li a {
-  display: block;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text);
-  white-space: nowrap;
-}
-
-.sub-menu li a:hover {
-  background: rgba(255,255,255,.05);
-}
-
-/* 마우스 올렸을 때만 보이게 */
-.main-nav > ul > li:hover > .sub-menu {
-  display: block;
-}
-
-
-      </nav>
-    </header>
 
     <div class="hero">
       <div class="panel heroMain">
