@@ -4,124 +4,85 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>HPC 교회지도 | ONEBODY</title>
-
-  <!-- Leaflet (지도 라이브러리, API 키 불필요) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
   <style>
-    :root{
-      --bg:#0B1220;
-      --card:#0F1A33;
-      --soft:#101B37;
-      --text:#EAF0FF;
-      --muted:rgba(234,240,255,.72);
-      --line:rgba(234,240,255,.12);
-      --radius:18px;
-      --shadow: 0 18px 60px rgba(0,0,0,.35);
-      --accent:#7DD3FC;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 20% 10%, rgba(125,211,252,.14), transparent 60%),
-        radial-gradient(900px 600px at 80% 0%, rgba(167,243,208,.12), transparent 55%),
-        radial-gradient(900px 700px at 60% 100%, rgba(99,102,241,.14), transparent 55%),
-        var(--bg);
-    }
-    header{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      padding:12px 16px; border-bottom:1px solid var(--line);
-      backdrop-filter: blur(6px);
-    }
-    .left{display:flex; gap:8px; align-items:center;}
-    .btn{
-      padding:10px 12px; border-radius:999px; border:1px solid var(--line);
-      background:rgba(255,255,255,.04); color:var(--text);
-      cursor:pointer; font-size:13px;
-    }
-    .btn:hover{border-color:rgba(125,211,252,.35); background:rgba(255,255,255,.07);}
-    .hint{font-size:12px; color:var(--muted);}
-    #map{ height: calc(100vh - 58px); }
-    .pill{
-      padding:8px 10px; border-radius:999px; border:1px dashed var(--line);
-      font-size:12px; color:var(--muted);
-    }
+    :root{--bg:#0B1220;--card:#0F1A33;--text:#EAF0FF;--muted:rgba(234,240,255,.72);--line:rgba(234,240,255,.12);--shadow:0 18px 60px rgba(0,0,0,.35);}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR","Malgun Gothic",sans-serif;color:var(--text);background:var(--bg)}
+    header{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));}
+    .btn{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;font-size:12px}
+    .btn:hover{border-color:rgba(125,211,252,.35);background:rgba(255,255,255,.07)}
+    #map{height:calc(100vh - 52px)}
+    .leaflet-control-layers{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
   </style>
 </head>
 <body>
   <header>
-    <div class="left">
+    <div>
       <button class="btn" onclick="location.href='./index.html'">← 홈</button>
       <button class="btn" id="locBtn">📍 내 위치</button>
-      <span class="pill">모바일에서 더 정확</span>
     </div>
-    <div class="hint">위치 권한을 허용하면 주변 교회가 한눈에 보여요</div>
+    <small style="opacity:.7">레이어 체크로 지역/구간별 표시를 켜고 끄세요</small>
   </header>
-
   <div id="map"></div>
 
   <script>
-    window.addEventListener('load', async () => {
-      // 지도 기본 세팅 (서울 시청 근처)
-      const map = L.map('map').setView([37.5665, 126.9780], 12);
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
+    window.addEventListener('load', () => {
+      const map = L.map('map').setView([36.5, 127.8], 7);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
       let myMarker = null;
+      document.getElementById('locBtn').onclick = () => {
+        if (!navigator.geolocation) return alert('위치 기능 미지원');
+        navigator.geolocation.getCurrentPosition(p=>{
+          const {latitude:lat, longitude:lng} = p.coords;
+          if (myMarker) myMarker.remove();
+          myMarker = L.marker([lat,lng]).addTo(map).bindPopup('내 위치').openPopup();
+          map.setView([lat,lng], 13);
+        }, ()=>alert('위치 권한이 거부되었어요'), {enableHighAccuracy:true, timeout:10000});
+      };
 
-      // (옵션) 교회 데이터 로드: /data/churches.geojson 있으면 자동 표시
-      async function loadChurches() {
-        try {
-          const res = await fetch('./data/churches.geojson');
-          if (!res.ok) return; // 파일 없으면 조용히 스킵
-          const geo = await res.json();
-          L.geoJSON(geo, {
-            onEachFeature: (feature, layer) => {
-              const p = feature.properties || {};
-              const name = p.name || p.title || p.교회명 || '교회';
-              const addr = p.address || p.addr || p.주소 || '';
-              layer.bindPopup(`<b>${name}</b><br>${addr}`);
-            }
-          }).addTo(map);
-        } catch (e) {
-          console.warn('교회 데이터 로드 스킵:', e);
-        }
-      }
-      loadChurches();
-
-      // 내 위치 표시
-      function locateMe() {
-        if (!navigator.geolocation) {
-          alert('이 브라우저는 위치 기능을 지원하지 않아요.');
-          return;
-        }
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-
-            if (myMarker) myMarker.remove();
-            myMarker = L.marker([lat, lng]).addTo(map).bindPopup('내 위치').openPopup();
-            map.setView([lat, lng], 14);
+      const overlays = {};
+      async function addLayer(label, url){
+        const res = await fetch(url);
+        const geo = await res.json();
+        const layer = L.geoJSON(geo, {
+          pointToLayer: (f, latlng) => {
+            const p = f.properties || {};
+            const color = p['marker-color'] || p.color || '#7DD3FC';
+            return L.circleMarker(latlng, {radius:6, color, fillColor:color, fillOpacity:.9, weight:2});
           },
-          (err) => {
-            alert('위치 권한이 거부되었거나 위치를 가져오지 못했어요. 모바일에서 다시 시도해보세요.');
-            console.warn(err);
-          },
-          { enableHighAccuracy: true, timeout: 10000 }
-        );
+          onEachFeature: (f, l) => {
+            const p = f.properties || {};
+            l.bindPopup(`<b>${p.name || p.title || '교회'}</b><br/>교인수: ${p.members || p.교인수 || '미상'}`);
+          }
+        });
+        overlays[label] = layer;
       }
 
-      document.getElementById('locBtn').addEventListener('click', locateMe);
-      // 처음 접속 시 자동으로 한 번 시도하고 싶으면 아래 주석 해제
-      // locateMe();
+      Promise.all([
+        addLayer('서울', './data/region/seoul.geojson'),
+        addLayer('경기', './data/region/gyeonggi.geojson'),
+        addLayer('충청', './data/region/chungcheong.geojson'),
+        addLayer('전라', './data/region/jeolla.geojson'),
+        addLayer('강원', './data/region/gangwon.geojson'),
+        addLayer('경상', './data/region/gyeongsang.geojson'),
+        addLayer('제주', './data/region/jeju.geojson'),
+        addLayer('해외', './data/special/overseas.geojson'),
+        addLayer('주소없음', './data/special/no_address.geojson'),
+        addLayer('기타(표기이상)', './data/special/etc.geojson'),
+        addLayer('0-8명', './data/buckets/b_0_8.geojson'),
+        addLayer('9-17명', './data/buckets/b_9_17.geojson'),
+        addLayer('18-27명', './data/buckets/b_18_27.geojson'),
+        addLayer('28-40명', './data/buckets/b_28_40.geojson'),
+        addLayer('44-70명', './data/buckets/b_44_70.geojson'),
+        addLayer('75-120명', './data/buckets/b_75_120.geojson'),
+        addLayer('145-300명', './data/buckets/b_145_300.geojson'),
+        addLayer('313-800명', './data/buckets/b_313_800.geojson'),
+        addLayer('1000-25000명', './data/buckets/b_1000_25000.geojson'),
+      ]).then(()=>{
+        L.control.layers(null, overlays, { collapsed:false }).addTo(map);
+      });
     });
   </script>
 </body>
