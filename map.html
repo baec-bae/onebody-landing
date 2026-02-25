@@ -22,12 +22,12 @@
       <button class="btn" onclick="location.href='./index.html'">← 홈</button>
       <button class="btn" id="locBtn">📍 내 위치</button>
     </div>
-    <small style="opacity:.7">레이어 체크로 지역/구간별 표시를 켜고 끄세요</small>
+    <small style="opacity:.7">레이어 체크로 지역/구간별 표시 ON/OFF</small>
   </header>
   <div id="map"></div>
 
   <script>
-    window.addEventListener('load', () => {
+    window.addEventListener('load', async () => {
       const map = L.map('map').setView([36.5, 127.8], 7);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
@@ -43,24 +43,25 @@
       };
 
       const overlays = {};
-      async function addLayer(label, url){
+      async function addLayer(label, url, color=null){
         const res = await fetch(url);
+        if (!res.ok) throw new Error('못 불러옴: ' + url);
         const geo = await res.json();
         const layer = L.geoJSON(geo, {
           pointToLayer: (f, latlng) => {
-            const p = f.properties || {};
-            const color = p['marker-color'] || p.color || '#7DD3FC';
-            return L.circleMarker(latlng, {radius:6, color, fillColor:color, fillOpacity:.9, weight:2});
+            const c = color || (f.properties && (f.properties['marker-color'] || f.properties.color)) || '#7DD3FC';
+            return L.circleMarker(latlng, {radius:6, color:c, fillColor:c, fillOpacity:.9, weight:2});
           },
           onEachFeature: (f, l) => {
             const p = f.properties || {};
-            l.bindPopup(`<b>${p.name || p.title || '교회'}</b><br/>교인수: ${p.members || p.교인수 || '미상'}`);
+            l.bindPopup(`<b>${p.name || p.title || '교회'}</b><br/>교인수: ${p.members_num || p.members || p.교인수 || '미상'}`);
           }
         });
         overlays[label] = layer;
       }
 
-      Promise.all([
+      await Promise.all([
+        // 지역
         addLayer('서울', './data/region/seoul.geojson'),
         addLayer('경기', './data/region/gyeonggi.geojson'),
         addLayer('충청', './data/region/chungcheong.geojson'),
@@ -68,21 +69,20 @@
         addLayer('강원', './data/region/gangwon.geojson'),
         addLayer('경상', './data/region/gyeongsang.geojson'),
         addLayer('제주', './data/region/jeju.geojson'),
+
+        // 특수
         addLayer('해외', './data/special/overseas.geojson'),
         addLayer('주소없음', './data/special/no_address.geojson'),
         addLayer('기타(표기이상)', './data/special/etc.geojson'),
-        addLayer('0-8명', './data/buckets/b_0_8.geojson'),
-        addLayer('9-17명', './data/buckets/b_9_17.geojson'),
-        addLayer('18-27명', './data/buckets/b_18_27.geojson'),
-        addLayer('28-40명', './data/buckets/b_28_40.geojson'),
-        addLayer('44-70명', './data/buckets/b_44_70.geojson'),
-        addLayer('75-120명', './data/buckets/b_75_120.geojson'),
-        addLayer('145-300명', './data/buckets/b_145_300.geojson'),
-        addLayer('313-800명', './data/buckets/b_313_800.geojson'),
-        addLayer('1000-25000명', './data/buckets/b_1000_25000.geojson'),
-      ]).then(()=>{
-        L.control.layers(null, overlays, { collapsed:false }).addTo(map);
-      });
+
+        // 교인수 구간 (요청 색상 고정)
+        addLayer('0~50명', './data/buckets/b_0_50.geojson', '#BDBDBD'),
+        addLayer('50~100명', './data/buckets/b_50_100.geojson', '#FACC15'),
+        addLayer('100~300명', './data/buckets/b_100_300.geojson', '#A78BFA'),
+        addLayer('300명 초과', './data/buckets/b_300_plus.geojson', '#EF4444'),
+      ]);
+
+      L.control.layers(null, overlays, { collapsed:false }).addTo(map);
     });
   </script>
 </body>
