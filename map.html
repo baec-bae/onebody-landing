@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HPC 교회지도 | ONEBODY</title>
+
+  <!-- Leaflet (지도 라이브러리, API 키 불필요) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root{
+      --bg:#0B1220;
+      --card:#0F1A33;
+      --soft:#101B37;
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,.72);
+      --line:rgba(234,240,255,.12);
+      --radius:18px;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --accent:#7DD3FC;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(125,211,252,.14), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(167,243,208,.12), transparent 55%),
+        radial-gradient(900px 700px at 60% 100%, rgba(99,102,241,.14), transparent 55%),
+        var(--bg);
+    }
+    header{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      padding:12px 16px; border-bottom:1px solid var(--line);
+      backdrop-filter: blur(6px);
+    }
+    .left{display:flex; gap:8px; align-items:center;}
+    .btn{
+      padding:10px 12px; border-radius:999px; border:1px solid var(--line);
+      background:rgba(255,255,255,.04); color:var(--text);
+      cursor:pointer; font-size:13px;
+    }
+    .btn:hover{border-color:rgba(125,211,252,.35); background:rgba(255,255,255,.07);}
+    .hint{font-size:12px; color:var(--muted);}
+    #map{ height: calc(100vh - 58px); }
+    .pill{
+      padding:8px 10px; border-radius:999px; border:1px dashed var(--line);
+      font-size:12px; color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <button class="btn" onclick="location.href='./index.html'">← 홈</button>
+      <button class="btn" id="locBtn">📍 내 위치</button>
+      <span class="pill">모바일에서 더 정확</span>
+    </div>
+    <div class="hint">위치 권한을 허용하면 주변 교회가 한눈에 보여요</div>
+  </header>
+
+  <div id="map"></div>
+
+  <script>
+    window.addEventListener('load', async () => {
+      // 지도 기본 세팅 (서울 시청 근처)
+      const map = L.map('map').setView([37.5665, 126.9780], 12);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      let myMarker = null;
+
+      // (옵션) 교회 데이터 로드: /data/churches.geojson 있으면 자동 표시
+      async function loadChurches() {
+        try {
+          const res = await fetch('./data/churches.geojson');
+          if (!res.ok) return; // 파일 없으면 조용히 스킵
+          const geo = await res.json();
+          L.geoJSON(geo, {
+            onEachFeature: (feature, layer) => {
+              const p = feature.properties || {};
+              const name = p.name || p.title || p.교회명 || '교회';
+              const addr = p.address || p.addr || p.주소 || '';
+              layer.bindPopup(`<b>${name}</b><br>${addr}`);
+            }
+          }).addTo(map);
+        } catch (e) {
+          console.warn('교회 데이터 로드 스킵:', e);
+        }
+      }
+      loadChurches();
+
+      // 내 위치 표시
+      function locateMe() {
+        if (!navigator.geolocation) {
+          alert('이 브라우저는 위치 기능을 지원하지 않아요.');
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            if (myMarker) myMarker.remove();
+            myMarker = L.marker([lat, lng]).addTo(map).bindPopup('내 위치').openPopup();
+            map.setView([lat, lng], 14);
+          },
+          (err) => {
+            alert('위치 권한이 거부되었거나 위치를 가져오지 못했어요. 모바일에서 다시 시도해보세요.');
+            console.warn(err);
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      }
+
+      document.getElementById('locBtn').addEventListener('click', locateMe);
+      // 처음 접속 시 자동으로 한 번 시도하고 싶으면 아래 주석 해제
+      // locateMe();
+    });
+  </script>
+</body>
+</html>
